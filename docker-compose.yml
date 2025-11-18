@@ -1,0 +1,32 @@
+services:
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - ./qdrant_storage:/qdrant/storage
+    environment:
+      - QDRANT__SERVICE__GRPC_PORT=6334
+
+  # AI service commented out - running natively for development
+  # Uncomment for production deployment
+  # ai_service:
+  #   build: .
+  #   ports:
+  #     - "8000:8000"
+  #   volumes:
+  #     - .:/app
+  #   environment:
+  #     - MONGODB_URI=${MONGODB_URI}
+  #     - QDRANT_HOST=qdrant
+  #     - QDRANT_PORT=6333
+  #     - NODE_API_URL=${NODE_API_URL}
+  #     - OMP_NUM_THREADS=1
+  #     - MKL_NUM_THREADS=1
+  #     - OPENBLAS_NUM_THREADS=1
+  #     - NUMEXPR_NUM_THREADS=1
+  #     - TOKENIZERS_PARALLELISM=false
+  #   depends_on:
+  #     - qdrant
+  #   command: uvicorn src.api.main:app --host 0.0.0.0 --port 8000 --reload
