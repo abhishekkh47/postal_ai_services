@@ -21,6 +21,9 @@ class Settings(BaseSettings):
     EMBEDDING_DIMENSION: int = 384
     MAX_RESULTS: int = 10
     
+    # Admin
+    ADMIN_SECRET: str = "change-this-in-production"
+    
     # Environment
     ENVIRONMENT: str = "development"
     

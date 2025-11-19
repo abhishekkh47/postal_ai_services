@@ -1,9 +1,20 @@
-from sentence_transformers import SentenceTransformer
 from typing import List, Union
 import numpy as np
 from src.core.config import settings
 import os
+
+# Set environment variables BEFORE importing PyTorch or transformers
+os.environ['OMP_NUM_THREADS'] = '1'
+os.environ['MKL_NUM_THREADS'] = '1'
+os.environ['OPENBLAS_NUM_THREADS'] = '1'
+os.environ['NUMEXPR_NUM_THREADS'] = '1'
+os.environ['TOKENIZERS_PARALLELISM'] = 'false'
+
+# Now import PyTorch and sentence-transformers
 import torch
+torch.set_num_threads(1)
+
+from sentence_transformers import SentenceTransformer
 
 
 class EmbeddingsService:
@@ -11,17 +22,6 @@ class EmbeddingsService:
     
     def __init__(self):
         """Initialize the embeddings model"""
-        # Set environment variables BEFORE importing anything else
-        os.environ['OMP_NUM_THREADS'] = '1'
-        os.environ['MKL_NUM_THREADS'] = '1'
-        os.environ['OPENBLAS_NUM_THREADS'] = '1'
-        os.environ['NUMEXPR_NUM_THREADS'] = '1'
-        os.environ['TOKENIZERS_PARALLELISM'] = 'false'
-        
-        # Set PyTorch to single thread
-        torch.set_num_threads(1)
-        torch.set_num_interop_threads(1)
-        
         print(f"Loading embedding model: {settings.EMBEDDING_MODEL}")
         # Load model with device='cpu' explicitly
         self.model = SentenceTransformer(settings.EMBEDDING_MODEL, device='cpu')

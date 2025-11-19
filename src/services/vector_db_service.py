@@ -38,6 +38,8 @@ class VectorDBService:
     
     def create_collections(self):
         """Create collections for users and posts if they don't exist"""
+        from qdrant_client.models import PayloadSchemaType
+        
         collections = [self.USERS_COLLECTION, self.POSTS_COLLECTION]
         
         for collection_name in collections:
@@ -55,6 +57,25 @@ class VectorDBService:
                     )
                 )
                 print(f"Collection '{collection_name}' created successfully")
+            
+            # Create payload indexes for filtering
+            try:
+                if collection_name == self.USERS_COLLECTION:
+                    self.client.create_payload_index(
+                        collection_name=collection_name,
+                        field_name="user_id",
+                        field_schema=PayloadSchemaType.KEYWORD
+                    )
+                    print(f"Created index on 'user_id' for {collection_name}")
+                elif collection_name == self.POSTS_COLLECTION:
+                    self.client.create_payload_index(
+                        collection_name=collection_name,
+                        field_name="post_id",
+                        field_schema=PayloadSchemaType.KEYWORD
+                    )
+                    print(f"Created index on 'post_id' for {collection_name}")
+            except Exception as e:
+                print(f"Index might already exist or error creating: {e}")
     
     def upsert_user_embedding(self, user_id: str, embedding: List[float], metadata: Optional[Dict] = None):
         """

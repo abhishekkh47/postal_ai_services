@@ -1,8 +1,19 @@
-from detoxify import Detoxify
 from typing import Dict, List, Tuple
 import re
 import os
+
+# Set environment variables BEFORE importing PyTorch or transformers
+os.environ['OMP_NUM_THREADS'] = '1'
+os.environ['MKL_NUM_THREADS'] = '1'
+os.environ['OPENBLAS_NUM_THREADS'] = '1'
+os.environ['NUMEXPR_NUM_THREADS'] = '1'
+os.environ['TOKENIZERS_PARALLELISM'] = 'false'
+
+# Now import PyTorch and Detoxify
 import torch
+torch.set_num_threads(1)
+
+from detoxify import Detoxify
 
 
 class ModerationService:
@@ -21,13 +32,6 @@ class ModerationService:
     
     def __init__(self):
         """Initialize moderation models"""
-        # Set threading limits to prevent hanging
-        os.environ['OMP_NUM_THREADS'] = '1'
-        os.environ['MKL_NUM_THREADS'] = '1'
-        os.environ['OPENBLAS_NUM_THREADS'] = '1'
-        torch.set_num_threads(1)
-        torch.set_num_interop_threads(1)
-        
         print("Loading toxicity detection model...")
         self.toxicity_model = Detoxify('original', device='cpu')
         print("Toxicity detection model loaded successfully")
