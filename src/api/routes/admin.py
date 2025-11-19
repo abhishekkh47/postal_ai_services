@@ -31,8 +31,12 @@ async def initialize_embeddings(
         vector_db = get_vector_db_service()
         mongo = get_mongo_service()
         
-        # Create collections
-        vector_db.create_collections()
+        # Create collections (ignore if already exist)
+        try:
+            vector_db.create_collections()
+        except Exception as e:
+            print(f"Collections might already exist: {e}")
+            # Continue anyway - collections exist is fine
         
         # Process users
         users = mongo.get_all_users()
