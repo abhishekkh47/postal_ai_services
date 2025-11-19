@@ -3,6 +3,7 @@ from qdrant_client.models import Distance, VectorParams, PointStruct, Filter, Fi
 from typing import List, Dict, Any, Optional
 from src.core.config import settings
 import uuid
+import os
 
 
 class VectorDBService:
@@ -15,10 +16,23 @@ class VectorDBService:
     def __init__(self):
         """Initialize Qdrant client"""
         print(f"Connecting to Qdrant at {settings.QDRANT_HOST}:{settings.QDRANT_PORT}")
-        self.client = QdrantClient(
-            host=settings.QDRANT_HOST,
-            port=settings.QDRANT_PORT
-        )
+        
+        # Check if using Qdrant Cloud (has API key)
+        qdrant_api_key = os.getenv('QDRANT_API_KEY')
+        
+        if qdrant_api_key:
+            # Qdrant Cloud connection
+            self.client = QdrantClient(
+                url=f"https://{settings.QDRANT_HOST}",
+                api_key=qdrant_api_key
+            )
+        else:
+            # Local Qdrant connection
+            self.client = QdrantClient(
+                host=settings.QDRANT_HOST,
+                port=settings.QDRANT_PORT
+            )
+        
         print("Qdrant connected successfully")
     
     def create_collections(self):
