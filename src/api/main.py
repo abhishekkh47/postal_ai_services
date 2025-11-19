@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from src.api.routes import recommendations, search, moderation, embeddings
+from src.api.routes import recommendations, search, moderation, embeddings, admin
 from src.models.schemas import HealthCheckResponse
 from src.core.config import settings
 from src.core.dependencies import get_vector_db_service
@@ -26,6 +26,7 @@ app.include_router(recommendations.router, prefix="/api")
 app.include_router(search.router, prefix="/api")
 app.include_router(moderation.router, prefix="/api")
 app.include_router(embeddings.router, prefix="/api")
+app.include_router(admin.router, prefix="/api")  # Admin endpoints
 
 
 @app.on_event("startup")

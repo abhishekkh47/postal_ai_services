@@ -15,19 +15,20 @@ class VectorDBService:
     
     def __init__(self):
         """Initialize Qdrant client"""
-        print(f"Connecting to Qdrant at {settings.QDRANT_HOST}:{settings.QDRANT_PORT}")
-        
         # Check if using Qdrant Cloud (has API key)
-        qdrant_api_key = os.getenv('QDRANT_API_KEY')
+        qdrant_api_key = os.getenv('QDRANT_API_KEY') or settings.QDRANT_API_KEY
         
         if qdrant_api_key:
-            # Qdrant Cloud connection
+            # Qdrant Cloud connection (uses HTTPS, no port)
+            qdrant_url = f"https://{settings.QDRANT_HOST}"
+            print(f"Connecting to Qdrant Cloud at {qdrant_url}")
             self.client = QdrantClient(
-                url=f"https://{settings.QDRANT_HOST}",
+                url=qdrant_url,
                 api_key=qdrant_api_key
             )
         else:
-            # Local Qdrant connection
+            # Local Qdrant connection (uses host:port)
+            print(f"Connecting to Qdrant at {settings.QDRANT_HOST}:{settings.QDRANT_PORT}")
             self.client = QdrantClient(
                 host=settings.QDRANT_HOST,
                 port=settings.QDRANT_PORT
