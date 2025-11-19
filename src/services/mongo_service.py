@@ -121,15 +121,17 @@ class MongoService:
             List of user IDs being followed
         """
         try:
-            # Assuming you have a 'friends' or 'follows' collection
-            # Adjust based on your actual schema
+            # Query the friends collection
+            # followerId = user who is following
+            # followeeId = user who is being followed
             follows = self.db.friends.find({
-                "senderId": ObjectId(user_id),
-                "status": 2  # Assuming status 2 means accepted/following
+                "followerId": ObjectId(user_id)
             })
-            return [str(f["receiverId"]) for f in follows]
+            return [str(f["followeeId"]) for f in follows]
         except Exception as e:
             print(f"Error fetching following list: {e}")
+            import traceback
+            print(traceback.format_exc())
             return []
     
     def get_user_interactions(self, user_id: str) -> Dict[str, List[str]]:
